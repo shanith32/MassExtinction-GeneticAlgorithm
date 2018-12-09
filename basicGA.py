@@ -1,16 +1,18 @@
 # Basic Genetic algorithm to deal with the Knapsack problem
 import random
 import copy
+import readData
 
 
 def main():
     print("Basic Genetic Algorithm")
     print("- - - - - - - - - - - - - - - - - ")
-    data = [[4, 2, 0], [5, 2, 1], [7, 11, 2],
-            [7, 11, 3]]  # object set with the properties - [value, weight, id]
-    capacity = 10  # weight capacity of the container
-    popSize = 5  # population size
-    genAmout = 10  # how many generations to run
+    # object set with the properties - [value, weight, id]
+    data = readData.main()
+    print(data)
+    capacity = 269  # weight capacity of the container
+    popSize = 100  # population size
+    genAmout = 100  # how many generations to run
     probability = 0.5
     # Randomly generate the initial population
     initailPopulation = generateInitialPopulation(popSize, capacity, data)
