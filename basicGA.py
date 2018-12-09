@@ -1,157 +1,143 @@
+# Basic Genetic algorithm to deal with the Knapsack problem
 import random
 import copy
-# Genetic algorithm to deal with the Knapsack problem
 
-done = False
 
-while (done != True):
-    print(
-        "This is a cool Evolutionary Algorithm!\n(⌐■_■)--︻╦╤─ - - - - - - - - - - - -\n\nInput ^Z anytime and hit Enter to exit the program immediately!\n"
-    )
-    container = []  # the container to contain the objects in
-
-    capacity = int(input("Specify the CAPACITY of the container: ")
-                   )  # weight capacity of the container
-
-    x = int(input("Specify the NUMBER OF OBJECTS you want: ")
-            )  # How many object will be there in the dataset
-
-    print("Set up each object's values accordingly Ex: [value, weight, id],")
-
-    data = []  # object set with the properties - [value, weight, id]
-
-    for i in range(x):
-        obj = []  # An object
-        obj.append(int(input("Enter VALUE: ")))
-        obj.append(int(input("Enter WEIGHT: ")))
-        obj.append(i)
-        print("Object number ", i, " is ", obj)
-        data.append(obj)
+def main():
+    print("Mass Extinction Genetic Algorithm")
     print("- - - - - - - - - - - - - - - - - ")
-    print("THE DATA SET IS => ", data)
+    data = [[4, 2, 0], [5, 2, 1], [7, 11, 2],
+            [7, 11, 3]]  # object set with the properties - [value, weight, id]
+    capacity = 10  # weight capacity of the container
+    popSize = 5  # population size
+    genAmout = 10  # how many generations to run
+    probability = 0.5
+    # Randomly generate the initial population
+    initailPopulation = generateInitialPopulation(popSize, capacity, data)
+    print("The Randomly Generated initail population: ", initailPopulation)
+
+    # Generation GA loop
+    genCount = 0
+    while (genCount != genAmout):
+        populationTwo = []  # Second population array
+        popCount = 0
+        while (popCount != popSize):
+            populationOne = copy.deepcopy(
+                initailPopulation)  # First population array
+            # parent selection
+            parentOne = selection(populationOne)
+            parentTwo = selection(populationOne)
+            # crossover
+            offSpringSolution = crossover(data, parentOne, parentTwo)
+            # mutation
+            mutatedOffSpring = mutation(data, offSpringSolution, probability)
+            # encode soultion into a chromosome
+            newOffSpringChomosome = encodeChromosome(data, mutatedOffSpring)
+            # evaluation
+            if(evaluation(newOffSpringChomosome, capacity)):
+                populationTwo.append(newOffSpringChomosome)
+                popCount += 1
+        print("Generation number: ", genCount, " Population: ", populationTwo)
+        initailPopulation = copy.deepcopy(populationTwo)
+        genCount += 1
+
     print("- - - - - - - - - - - - - - - - - ")
-
-    POP_SIZE = int(
-        input(
-            "Specify the number of Chromosomes in a generation or the POPULATION SIZE: "
-        ))  # population size
-
-    GEN_AMOUNT = int(
-        input("Specify the amount of GENERATIONS to run the algorithm: ")
-    )  # how many generations to run
-
-    probability = float(
-        input(
-            "Specify the MUTATION RATE/PROBABILITY(Enter a decimal in between 0 & 1): "
-        ))  # mutation rate
+    print("Final population: ", initailPopulation)
+    sortedFinalPop = sorted(
+        initailPopulation, key=lambda x: x[1], reverse=True)
+    result = sortedFinalPop[0]
     print("- - - - - - - - - - - - - - - - - ")
+    print("Most fit final chromosome: ", result)
+    print("Total value: ", result[1],
+          " Total weight: ", result[2])
 
-    repeat = True
-    while (repeat != False):
-        # Initial Population
-        INITIAL_POPULATION = []  # The inital population array
-        initCount = 0
-        while (initCount != POP_SIZE):
-            CHROMO = [] * 3  # [[binary soultion], fitness, total weight]
-            solution = []
-            for i in range(len(data)):
-                select = random.randint(0, 1)
-                solution.append(select)
-            fitness = 0
-            totalWeight = 0
-            for k in range(len(solution)):
-                if (solution[k] == 1):
-                    fitness += data[k][0]
-                    totalWeight += data[k][1]
-            CHROMO.append(solution)
-            CHROMO.append(fitness)
-            CHROMO.append(totalWeight)
-            if (CHROMO[2] <= capacity):
-                INITIAL_POPULATION.append(CHROMO)
-                initCount += 1
 
-        print("The Randomly Generated INITIAL POPULATION is ",
-              INITIAL_POPULATION)
-        print("- - - - - - - - - - - - - - - - - ")
+# Functions
+# Generate a random solution
+def generateRandomSolution(data):
+    solution = []
+    for i in range(len(data)):
+        select = random.randint(0, 1)
+        solution.append(select)
+    return solution
 
-        # Generation GA loop
-        genCount = 0
-        while (genCount != GEN_AMOUNT):
-            print("Generation number => ", genCount)
-            POPULATION_TWO = []  # Second population array
-            popCount = 0
-            # for i in range(2):
-            while (popCount != POP_SIZE):
-                # print("Initial pop of gen:", genCount, "is:", INITIAL_POPULATION)
-                POPULATION_ONE = copy.deepcopy(
-                    INITIAL_POPULATION)  # First population array
-                sortedPop = sorted(
-                    POPULATION_ONE, key=lambda x: x[1], reverse=True)
-                # Find Parent Chromosome
-                # print("sorted pop", sortedPop)
-                parent = sortedPop[0]
-                print("   Selected PARENT CHROMOSOME => ", parent)
-                # mutation
-                offspringSolution = parent[0]
-                # print("offspring sol before:", offspringSolution)
-                randomIndex = random.randint(0, len(data) - 1)
-                # print("random index to mutate:", randomIndex)
-                mutation = offspringSolution[randomIndex]
-                # print("value in the random index: ", mutation)
-                sortedPop = sorted(
-                    POPULATION_ONE, key=lambda x: x[1], reverse=True)
-                # Chance of mutation to happen based on mutaion rate
-                chance = random.random() <= probability
-                if (chance):
-                    if (mutation == 0):
-                        offspringSolution[randomIndex] = 1
-                    else:
-                        offspringSolution[randomIndex] = 0
-                # print("offspring sol after mutation:", offspringSolution)
-                # create offspring Chromosome
-                CHROMO = [] * 3  # [[binary soultion], fitness, total weight]
-                fitness = 0
-                totalWeight = 0
-                for j in range(len(offspringSolution)):
-                    if (offspringSolution[j] == 1):
-                        fitness += data[j][0]
-                        totalWeight += data[j][1]
-                CHROMO.append(offspringSolution)
-                CHROMO.append(fitness)
-                CHROMO.append(totalWeight)
-                print("   OFFSPRING CHROMOSOME => ", CHROMO)
-                if (CHROMO[2] <= capacity):
-                    POPULATION_TWO.append(CHROMO)
-                    # print("count increeeseddd+++++++")
-                    popCount += 1
-                print("   Population of Generation ", genCount, " => ",
-                      POPULATION_TWO)
-                # print("for is done-----------------")
-            print("NEW POPULATION - ", POPULATION_TWO)
-            INITIAL_POPULATION = copy.deepcopy(POPULATION_TWO)
-            genCount += 1
-        print("- - - - - - - - - - - - - - - - - ")
-        print("-FINAL POPULATION- ", INITIAL_POPULATION)
-        sortedFinalPop = sorted(
-            INITIAL_POPULATION, key=lambda x: x[1], reverse=True)
-        result = sortedFinalPop[0]
-        print("- - - - - - - - - - - - - - - - - ")
-        print("MOST FIT FINAL CHOROMOSOME => ", result)
-        print("Total VALUE of the CHOROMOSOME => ", result[1],
-              "Total WEIGHT of the CHOROMOSOME => ", result[2])
 
-        repeatChoice = input(
-            "Do you want to repeat the process with same variables? [y/n]: ")
-        if repeatChoice == "n":
-            repeat = False
-        else:
-            print("\n( ° ͜ʖ͡°)╭∩╮\n")
-            input("Press Enter to Repeat!\n")
+# Encode a chromosome
+def encodeChromosome(data, solution):
+    chromosome = [] * 3  # [[binary soultion], fitness, total weight]
+    fitness = 0
+    totalWeight = 0
 
-    restart = input("Do you want to restart the program? [y/n]: ")
-    if restart == "n":
-        done = True
-        print("[{-_-}] ZZZzz zz z...")
+    for k in range(len(solution)):
+        if (solution[k] == 1):
+            fitness += data[k][0]
+            totalWeight += data[k][1]
+    chromosome.append(solution)
+    chromosome.append(fitness)
+    chromosome.append(totalWeight)
+    return chromosome
+
+
+# Generate a population of random chromosomes
+def generateInitialPopulation(popSize, capacity, data):
+    # Initial Population
+    initailPopulation = []  # The inital population array
+    initCount = 0
+    while (initCount != popSize):
+        randSolution = generateRandomSolution(data)
+        newChromosome = encodeChromosome(data, randSolution)
+        if (newChromosome[2] <= capacity):
+            initailPopulation.append(newChromosome)
+            initCount += 1
+    return initailPopulation
+
+
+# Two Tournament Selection
+def selection(population):
+    chromoOne = random.choice(population)
+    chromoTwo = random.choice(population)
+
+    if(chromoOne[1] > chromoTwo[1]):
+        return chromoOne
     else:
-        print("\n╭∩╮(Ο_Ο)╭∩╮")
-        input("Press Enter to Start Over!\n")
+        return chromoTwo
+
+
+# One point Crossover
+def crossover(data, parentOne, parentTwo):
+    cutPoint = len(parentOne[0])//2
+    done = 0
+    offSpringSolution = []
+    while(done < cutPoint):
+        offSpringSolution.append(parentOne[0][done])
+        done += 1
+    while(done < len(parentOne[0])):
+        offSpringSolution.append(parentTwo[0][done])
+        done += 1
+
+    return offSpringSolution
+
+
+# One index flip Mutation
+def mutation(data, solution, probability):
+    randomIndex = random.randint(0, len(data) - 1)
+    mutation = solution[randomIndex]
+    chance = random.random() <= probability
+    if (chance):
+        if (mutation == 0):
+            solution[randomIndex] = 1
+        else:
+            solution[randomIndex] = 0
+    return solution
+
+
+# OffSpring Evaluaion
+def evaluation(offSpringChromosome, capacity):
+    if (offSpringChromosome[2] <= capacity):
+        return True
+    else:
+        return False
+
+
+if __name__ == "__main__":
+    main()

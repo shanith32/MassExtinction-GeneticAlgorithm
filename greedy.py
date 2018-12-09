@@ -1,4 +1,4 @@
-# Heuristic algorithm to deal with the Knapsack problem
+# Heuristic Greedy algorithm to deal with the Knapsack problem
 
 data = [[4, 2, 0], [5, 2, 1], [7, 11, 2],
         [7, 11, 3]]  # object set with the properties - [value, weight, id]
