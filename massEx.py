@@ -1,10 +1,10 @@
-# Basic Genetic algorithm to deal with the Knapsack problem
+# Genetic algorithm with Mass Extinction events to deal with the Knapsack problem
 import random
 import copy
 
 
 def main():
-    print("Basic Genetic Algorithm")
+    print("Mass Extinction Genetic Algorithm")
     print("- - - - - - - - - - - - - - - - - ")
     data = [[4, 2, 0], [5, 2, 1], [7, 11, 2],
             [7, 11, 3]]  # object set with the properties - [value, weight, id]

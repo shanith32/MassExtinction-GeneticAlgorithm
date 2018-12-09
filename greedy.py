@@ -1,5 +1,8 @@
 # Heuristic Greedy algorithm to deal with the Knapsack problem
 
+print("Greedy Algorithm")
+print("- - - - - - - - - - - - - - - - - ")
+
 data = [[4, 2, 0], [5, 2, 1], [7, 11, 2],
         [7, 11, 3]]  # object set with the properties - [value, weight, id]
 
@@ -47,5 +50,5 @@ CHROMO.append(solution)
 CHROMO.append(fitness)
 CHROMO.append(totalWeight)
 print("!!result!!:", CHROMO)
-print("Total value of the soultion:", CHROMO[1],
-      "Total weight of the soultion:", CHROMO[2])
+print("Total value: ", CHROMO[1],
+      " Total weight: ", CHROMO[2])
