@@ -8,4 +8,8 @@ http://artemisa.unicauca.edu.co/~johnyortega/instances_01_KP
 
 ### Basic GAs fitness graph
 
-![Alt text](results/basicGArun.png?raw=true "Title")
+![Alt text](results/basicGArun.png?raw=true "Basic GAs fitness graph")
+
+### Mass Extinction GAs fitness graph
+
+![Alt text](results/massExrun.png?raw=true " Mass Extinction GAs fitness graph")
