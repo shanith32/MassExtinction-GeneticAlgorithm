@@ -1,4 +1,4 @@
-# mass-extinction-genetic-algorithm
+# Mass-Extinction-Genetic-Algorithm
 
 An extended genetic algorithm which uses mass extinction events to improve algorithmic efficiency
 
