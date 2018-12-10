@@ -1,13 +1,13 @@
 # Heuristic Greedy algorithm to deal with the Knapsack problem
+import readData
 
 print("Greedy Algorithm")
 print("- - - - - - - - - - - - - - - - - ")
 
-data = [[4, 2, 0], [5, 2, 1], [7, 11, 2],
-        [7, 11, 3]]  # object set with the properties - [value, weight, id]
+data = readData.main()  # object set with the properties - [value, weight, id]
 
 container = []  # the container to contain the objects in
-capacity = 10  # weight capacity of the container
+capacity = 269  # weight capacity of the container
 solution = [0] * len(data)  # binary representation of the soultion
 
 ratios = []  # an array to store the ratios of each object

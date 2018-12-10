@@ -1,5 +1,5 @@
 def main():
-    f = open("dataset/low-dimensional/f1_l-d_kp_10_269", "r")
+    f = open("dataset/low-dimensional/f2_l-d_kp_20_878", "r")
     data = f.readlines()
     count = len(data)-1
     objects = []  # Set of objects that we will used as the dataset for the programs

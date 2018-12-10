@@ -9,9 +9,8 @@ def main():
     print("- - - - - - - - - - - - - - - - - ")
     # object set with the properties - [value, weight, id]
     data = readData.main()
-    print(data)
     capacity = 269  # weight capacity of the container
-    popSize = 100  # population size
+    popSize = 10  # population size
     genAmout = 100  # how many generations to run
     probability = 0.5
     # Randomly generate the initial population

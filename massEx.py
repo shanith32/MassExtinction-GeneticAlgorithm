@@ -1,20 +1,29 @@
 # Genetic algorithm with Mass Extinction events to deal with the Knapsack problem
 import random
 import copy
+import matplotlib.pyplot as plt
+import readData
 
 
 def main():
     print("Mass Extinction Genetic Algorithm")
     print("- - - - - - - - - - - - - - - - - ")
-    data = [[4, 2, 0], [5, 2, 1], [7, 11, 2],
-            [7, 11, 3]]  # object set with the properties - [value, weight, id]
-    capacity = 10  # weight capacity of the container
-    popSize = 5  # population size
-    genAmout = 10  # how many generations to run
+    # object set with the properties - [value, weight, id]
+    data = readData.main()
+    capacity = 878  # weight capacity of the container
+    popSize = 10  # population size
+    genAmout = 500  # how many generations to run
     probability = 0.5
+    highestFitnessList = []  # Track the highest fitness in each generation
+    duplicateFitnessList = []
     # Randomly generate the initial population
     initailPopulation = generateInitialPopulation(popSize, capacity, data)
+    # Averge fitness of the random initail population
+    hFitness = highestFitness(initailPopulation)
+    duplicateFitnessList.append(hFitness)
+    highestFitnessList.append(hFitness)
     print("The Randomly Generated initail population: ", initailPopulation)
+    print("Highest Fitness: ", hFitness)
 
     # Generation GA loop
     genCount = 0
@@ -37,7 +46,11 @@ def main():
             if(evaluation(newOffSpringChomosome, capacity)):
                 populationTwo.append(newOffSpringChomosome)
                 popCount += 1
+        hFitness = highestFitness(populationTwo)
+        isDuplicate(duplicateFitnessList, hFitness)
+        highestFitnessList.append(hFitness)
         print("Generation number: ", genCount, " Population: ", populationTwo)
+        print("Highest Fitness: ", hFitness)
         initailPopulation = copy.deepcopy(populationTwo)
         genCount += 1
 
@@ -50,6 +63,12 @@ def main():
     print("Most fit final chromosome: ", result)
     print("Total value: ", result[1],
           " Total weight: ", result[2])
+    print("average fitness list: ", highestFitnessList)
+    print("dublicate fitness list: ", duplicateFitnessList)
+    plt.plot(highestFitnessList)
+    plt.ylabel('Highest Fitness')
+    plt.xlabel('Generation Count')
+    plt.show()
 
 
 # Functions
@@ -137,6 +156,26 @@ def evaluation(offSpringChromosome, capacity):
         return True
     else:
         return False
+
+
+# Take the higest fitness of the population
+def highestFitness(population):
+    # sumforave = 0
+    # for i in range(len(population)):
+    #     sumforave += population[i][1]
+    # return sumforave/len(population)
+    sortedFinalPop = sorted(
+        population, key=lambda x: x[1], reverse=True)
+    result = sortedFinalPop[0][1]
+    return result
+
+
+# Check if there is a fitness duplication
+def isDuplicate(dupList, hFitness):
+    # if(dupList[len(dupList)]-1 == 10):
+    #     print("damn")
+    # else:
+    print("qwowowow", dupList)
 
 
 if __name__ == "__main__":
