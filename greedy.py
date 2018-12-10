@@ -4,10 +4,10 @@ import readData
 print("Greedy Algorithm")
 print("- - - - - - - - - - - - - - - - - ")
 
-data = readData.main()  # object set with the properties - [value, weight, id]
+data, capacity = readData.main()
+print("DATA____:", data, "CAPACIRY____:", capacity)
 
 container = []  # the container to contain the objects in
-capacity = 269  # weight capacity of the container
 solution = [0] * len(data)  # binary representation of the soultion
 
 ratios = []  # an array to store the ratios of each object

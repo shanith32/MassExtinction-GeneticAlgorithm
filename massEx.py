@@ -9,25 +9,25 @@ def main():
     print("Mass Extinction Genetic Algorithm")
     print("- - - - - - - - - - - - - - - - - ")
     # object set with the properties - [value, weight, id]
-    data = readData.main()
-    capacity = 878  # weight capacity of the container
-    popSize = 10  # population size
-    genAmout = 500  # how many generations to run
+    data, capacity = readData.main()
+    popSize = 20  # population size and amout of mass extentions
+    dupAmount = 10
     probability = 0.5
     highestFitnessList = []  # Track the highest fitness in each generation
-    duplicateFitnessList = []
+    duplicateCount = 0
+    extinctionChromoList = [] * popSize
     # Randomly generate the initial population
     initailPopulation = generateInitialPopulation(popSize, capacity, data)
-    # Averge fitness of the random initail population
+    # Highest fitness of the random initail population
     hFitness = highestFitness(initailPopulation)
-    duplicateFitnessList.append(hFitness)
     highestFitnessList.append(hFitness)
+    duplicateCount += 1
     print("The Randomly Generated initail population: ", initailPopulation)
     print("Highest Fitness: ", hFitness)
 
     # Generation GA loop
     genCount = 0
-    while (genCount != genAmout):
+    while (len(extinctionChromoList) != popSize):
         populationTwo = []  # Second population array
         popCount = 0
         while (popCount != popSize):
@@ -37,7 +37,8 @@ def main():
             parentOne = selection(populationOne)
             parentTwo = selection(populationOne)
             # crossover
-            offSpringSolution = crossover(data, parentOne, parentTwo)
+            offSpringSolution = crossover(
+                data, parentOne, parentTwo, probability)
             # mutation
             mutatedOffSpring = mutation(data, offSpringSolution, probability)
             # encode soultion into a chromosome
@@ -47,24 +48,35 @@ def main():
                 populationTwo.append(newOffSpringChomosome)
                 popCount += 1
         hFitness = highestFitness(populationTwo)
-        isDuplicate(duplicateFitnessList, hFitness)
+        #
+        lastIndex = len(highestFitnessList)-1
+        if(hFitness == highestFitnessList[lastIndex]):
+            duplicateCount += 1
+        else:
+            duplicateCount = 1
+        #
         highestFitnessList.append(hFitness)
+        #
+        if(duplicateCount == dupAmount):
+            sortedPop = sorted(
+                populationTwo, key=lambda x: x[1], reverse=True)
+            extinctionChromoList.append(sortedPop[0])
+            populationTwo = generateInitialPopulation(popSize, capacity, data)
+        #
         print("Generation number: ", genCount, " Population: ", populationTwo)
         print("Highest Fitness: ", hFitness)
         initailPopulation = copy.deepcopy(populationTwo)
         genCount += 1
-
-    print("- - - - - - - - - - - - - - - - - ")
-    print("Final population: ", initailPopulation)
+    print("- - - - - - - - - - - - - - - - - - - - - - - - - - -")
+    print("Highest fitness list: ", highestFitnessList)
+    print("Extinction Population: ", extinctionChromoList)
     sortedFinalPop = sorted(
-        initailPopulation, key=lambda x: x[1], reverse=True)
+        extinctionChromoList, key=lambda x: x[1], reverse=True)
     result = sortedFinalPop[0]
-    print("- - - - - - - - - - - - - - - - - ")
     print("Most fit final chromosome: ", result)
     print("Total value: ", result[1],
           " Total weight: ", result[2])
-    print("average fitness list: ", highestFitnessList)
-    print("dublicate fitness list: ", duplicateFitnessList)
+    print("- - - - - - - - - - - - - - - - - - - - - - - - - - -")
     plt.plot(highestFitnessList)
     plt.ylabel('Highest Fitness')
     plt.xlabel('Generation Count')
@@ -123,18 +135,22 @@ def selection(population):
 
 
 # One point Crossover
-def crossover(data, parentOne, parentTwo):
-    cutPoint = len(parentOne[0])//2
-    done = 0
-    offSpringSolution = []
-    while(done < cutPoint):
-        offSpringSolution.append(parentOne[0][done])
-        done += 1
-    while(done < len(parentOne[0])):
-        offSpringSolution.append(parentTwo[0][done])
-        done += 1
+def crossover(data, parentOne, parentTwo, probability):
+    chance = random.random() <= probability
+    if (chance):
+        cutPoint = len(parentOne[0])//2
+        done = 0
+        offSpringSolution = []
+        while(done < cutPoint):
+            offSpringSolution.append(parentOne[0][done])
+            done += 1
+        while(done < len(parentOne[0])):
+            offSpringSolution.append(parentTwo[0][done])
+            done += 1
 
-    return offSpringSolution
+        return offSpringSolution
+    else:
+        return parentOne[0]
 
 
 # One index flip Mutation
@@ -168,14 +184,6 @@ def highestFitness(population):
         population, key=lambda x: x[1], reverse=True)
     result = sortedFinalPop[0][1]
     return result
-
-
-# Check if there is a fitness duplication
-def isDuplicate(dupList, hFitness):
-    # if(dupList[len(dupList)]-1 == 10):
-    #     print("damn")
-    # else:
-    print("qwowowow", dupList)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 # Basic Genetic algorithm to deal with the Knapsack problem
 import random
 import copy
+import matplotlib.pyplot as plt
 import readData
 
 
@@ -8,14 +9,18 @@ def main():
     print("Basic Genetic Algorithm")
     print("- - - - - - - - - - - - - - - - - ")
     # object set with the properties - [value, weight, id]
-    data = readData.main()
-    capacity = 269  # weight capacity of the container
+    data, capacity = readData.main()
     popSize = 10  # population size
-    genAmout = 100  # how many generations to run
+    genAmout = 900  # how many generations to run
     probability = 0.5
+    highestFitnessList = []  # Track the highest fitness in each generation
     # Randomly generate the initial population
     initailPopulation = generateInitialPopulation(popSize, capacity, data)
+    # Highest fitness of the random initail population
+    hFitness = highestFitness(initailPopulation)
+    highestFitnessList.append(hFitness)
     print("The Randomly Generated initail population: ", initailPopulation)
+    print("Highest Fitness: ", hFitness)
 
     # Generation GA loop
     genCount = 0
@@ -29,7 +34,8 @@ def main():
             parentOne = selection(populationOne)
             parentTwo = selection(populationOne)
             # crossover
-            offSpringSolution = crossover(data, parentOne, parentTwo)
+            offSpringSolution = crossover(
+                data, parentOne, parentTwo, probability)
             # mutation
             mutatedOffSpring = mutation(data, offSpringSolution, probability)
             # encode soultion into a chromosome
@@ -38,11 +44,14 @@ def main():
             if(evaluation(newOffSpringChomosome, capacity)):
                 populationTwo.append(newOffSpringChomosome)
                 popCount += 1
+        hFitness = highestFitness(populationTwo)
+        highestFitnessList.append(hFitness)
         print("Generation number: ", genCount, " Population: ", populationTwo)
         initailPopulation = copy.deepcopy(populationTwo)
         genCount += 1
 
     print("- - - - - - - - - - - - - - - - - ")
+    print("Highest fitness list: ", highestFitnessList)
     print("Final population: ", initailPopulation)
     sortedFinalPop = sorted(
         initailPopulation, key=lambda x: x[1], reverse=True)
@@ -51,6 +60,10 @@ def main():
     print("Most fit final chromosome: ", result)
     print("Total value: ", result[1],
           " Total weight: ", result[2])
+    plt.plot(highestFitnessList)
+    plt.ylabel('Highest Fitness')
+    plt.xlabel('Generation Count')
+    plt.show()
 
 
 # Functions
@@ -105,18 +118,22 @@ def selection(population):
 
 
 # One point Crossover
-def crossover(data, parentOne, parentTwo):
-    cutPoint = len(parentOne[0])//2
-    done = 0
-    offSpringSolution = []
-    while(done < cutPoint):
-        offSpringSolution.append(parentOne[0][done])
-        done += 1
-    while(done < len(parentOne[0])):
-        offSpringSolution.append(parentTwo[0][done])
-        done += 1
+def crossover(data, parentOne, parentTwo, probability):
+    chance = random.random() <= probability
+    if (chance):
+        cutPoint = len(parentOne[0])//2
+        done = 0
+        offSpringSolution = []
+        while(done < cutPoint):
+            offSpringSolution.append(parentOne[0][done])
+            done += 1
+        while(done < len(parentOne[0])):
+            offSpringSolution.append(parentTwo[0][done])
+            done += 1
 
-    return offSpringSolution
+        return offSpringSolution
+    else:
+        return parentOne[0]
 
 
 # One index flip Mutation
@@ -138,6 +155,18 @@ def evaluation(offSpringChromosome, capacity):
         return True
     else:
         return False
+
+
+# Take the higest fitness of the population
+def highestFitness(population):
+    # sumforave = 0
+    # for i in range(len(population)):
+    #     sumforave += population[i][1]
+    # return sumforave/len(population)
+    sortedFinalPop = sorted(
+        population, key=lambda x: x[1], reverse=True)
+    result = sortedFinalPop[0][1]
+    return result
 
 
 if __name__ == "__main__":
