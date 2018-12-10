@@ -5,3 +5,7 @@ An extended genetic algorithm which uses mass extinction events to improve algor
 ## Dataset is from
 
 http://artemisa.unicauca.edu.co/~johnyortega/instances_01_KP
+
+### Basic GAs fitness graph
+
+![Alt text](results\basicGArun.png?raw=true "Title")
