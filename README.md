@@ -8,4 +8,4 @@ http://artemisa.unicauca.edu.co/~johnyortega/instances_01_KP
 
 ### Basic GAs fitness graph
 
-![Alt text](results\basicGArun.png?raw=true "Title")
+![Alt text](results/basicGArun.png?raw=true "Title")
